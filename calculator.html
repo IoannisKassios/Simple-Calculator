@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        /* Reset default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Center the calculator on the page */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #42526e;
+        }
+
+        .calculator {
+            background: #ffffff;
+            border-radius: 18px;
+            overflow: hidden;
+            width: 320px;
+        }
+
+        .display {
+            background: #282c32;
+            color: #ffffff;
+            padding: 30px 20px;
+            text-align: right;
+            min-height: 100px;
+        }
+
+        .display-previous {
+            font-size: 14px;
+            color: #a0aec0;
+            min-height: 20px;
+            margin-bottom: 8px;
+        }
+
+        .display-current {
+            font-size: 36px;
+            font-weight: 300;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #e2e8f0;
+        }
+
+        td {
+            padding: 0;
+            border: 1px solid #e2e8f0;
+        }
+
+        button {
+            width: 100%;
+            border: none;
+            background: #ffffff;
+            padding: 25px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #2d3748;
+        }
+
+        button:hover {
+            background: #f7fafc;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        /* Buttons (+,-, etc etc) */
+        .operator {
+            background: #edf2f7;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .operator:hover {
+            background: #e2e8f0;
+        }
+
+        /* Clear button  */
+        .clear {
+            background: #eb2929;
+            color: #ffffff;
+        }
+
+        .clear:hover {
+            background: #f56565;
+        }
+
+        /* Equals button */
+        .equals {
+            background: #3e60f5;
+            color: #ffffff;
+        }
+
+        .equals:hover {
+            background: #5a67d8;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <!-- Display -->
+        <div class="display">
+            <div class="display-previous" id="previous-operand"></div>
+            <div class="display-current" id="current-operand">0</div>
+        </div>
+
+        <!-- Button layout  -->
+        <table>
+            <tr>
+                <td><button class="clear" onclick="clearCalculator()">AC</button></td>
+                <td><button class="operator" onclick="deleteNumber()">DEL</button></td>
+                <td><button class="operator" onclick="chooseOperation('÷')">÷</button></td>
+                <td><button class="operator" onclick="chooseOperation('×')">×</button></td>
+            </tr>
+            <tr>
+                <td><button onclick="appendNumber('7')">7</button></td>
+                <td><button onclick="appendNumber('8')">8</button></td>
+                <td><button onclick="appendNumber('9')">9</button></td>
+                <td><button class="operator" onclick="chooseOperation('-')">−</button></td>
+            </tr>
+            <tr>
+                <td><button onclick="appendNumber('4')">4</button></td>
+                <td><button onclick="appendNumber('5')">5</button></td>
+                <td><button onclick="appendNumber('6')">6</button></td>
+                <td><button class="operator" onclick="chooseOperation('+')">+</button></td>
+            </tr>
+            <tr>
+                <td><button onclick="appendNumber('1')">1</button></td>
+                <td><button onclick="appendNumber('2')">2</button></td>
+                <td><button onclick="appendNumber('3')">3</button></td>
+                <td><button class="operator" onclick="chooseOperation('%')">%</button></td>
+            </tr>
+            <tr>
+                <td colspan="2"><button onclick="appendNumber('0')">0</button></td>
+                <td><button onclick="appendNumber('.')">.</button></td>
+                <td><button class="equals" onclick="calculate()">=</button></td>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        // Variables to store calculator state
+        var currentOperand = '0';       // The number currently being entered
+        var previousOperand = '';       // The first number in the operation
+        var operation = null;           // The operation (+, -, ×, ÷, %)
+
+        // Get display elements
+        var previousDisplay = document.getElementById('previous-operand');
+        var currentDisplay = document.getElementById('current-operand');
+
+        // Function to update the display
+        function updateDisplay() {
+            // Show the current number
+            currentDisplay.textContent = currentOperand;
+            
+            // Show the previous number and operation if they exist
+            if (operation !== null) {
+                previousDisplay.textContent = previousOperand + ' ' + operation;
+            } else {
+                previousDisplay.textContent = '';
+            }
+        }
+
+        // Function to add a number
+        function appendNumber(number) {
+            if (number === '.' && currentOperand.includes('.')) {
+                return;
+            }
+            
+            // If current number is 0, replace it with the new num
+            if (currentOperand === '0' && number !== '.') {
+                currentOperand = number;
+            } else {
+                currentOperand = currentOperand + number;
+            }
+            
+            updateDisplay();
+        }
+
+        // Function to select an op
+        function chooseOperation(selectedOperation) {
+            if (currentOperand === '') {
+                return;
+            }
+            
+
+            if (previousOperand !== '') {
+                calculate();
+            }
+            
+            operation = selectedOperation;
+            previousOperand = currentOperand;
+            currentOperand = '0';
+            
+            updateDisplay();
+        }
+
+        // Performing the calculation
+        function calculate() {
+            var result;
+            
+            // Convert strings to numbers
+            var prev = parseFloat(previousOperand);
+            var current = parseFloat(currentOperand);
+            
+            // Check if both numbers are valid
+            if (isNaN(prev) || isNaN(current)) {
+                return;
+            }
+            
+            // Perform the calculation
+            if (operation === '+') {
+                result = prev + current;
+            } else if (operation === '-') {
+                result = prev - current;
+            } else if (operation === '×') {
+                result = prev * current;
+            } else if (operation === '÷') {
+                result = prev / current;
+            } else if (operation === '%') {
+                result = prev % current;
+            } else {
+                return;
+            }
+            
+            // Store the result
+            currentOperand = result.toString();
+            operation = null;
+            previousOperand = '';
+            
+            updateDisplay();
+        }
+
+        function clearCalculator() {
+            currentOperand = '0';
+            previousOperand = '';
+            operation = null;
+            updateDisplay();
+        }
+
+        function deleteNumber() {
+            if (currentOperand === '0') {
+                return;
+            }
+            
+            if (currentOperand.length === 1) {
+                currentOperand = '0';
+            } else {
+                currentOperand = currentOperand.slice(0, -1);
+            }
+            
+            updateDisplay();
+        }
+    </script>
+</body>
+</html>
