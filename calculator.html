@@ -114,13 +114,11 @@
 </head>
 <body>
     <div class="calculator">
-        <!-- Display -->
         <div class="display">
             <div class="display-previous" id="previous-operand"></div>
             <div class="display-current" id="current-operand">0</div>
         </div>
 
-        <!-- Button layout  -->
         <table>
             <tr>
                 <td><button class="clear" onclick="clearCalculator()">AC</button></td>
@@ -155,7 +153,6 @@
     </div>
 
     <script>
-        // Variables to store calculator state
         var currentOperand = '0';       // The number currently being entered
         var previousOperand = '';       // The first number in the operation
         var operation = null;           // The operation (+, -, ×, ÷, %)
@@ -164,12 +161,11 @@
         var previousDisplay = document.getElementById('previous-operand');
         var currentDisplay = document.getElementById('current-operand');
 
-        // Function to update the display
         function updateDisplay() {
             // Show the current number
             currentDisplay.textContent = currentOperand;
             
-            // Show the previous number and operation if they exist
+            // Show the previous number
             if (operation !== null) {
                 previousDisplay.textContent = previousOperand + ' ' + operation;
             } else {
@@ -183,7 +179,6 @@
                 return;
             }
             
-            // If current number is 0, replace it with the new num
             if (currentOperand === '0' && number !== '.') {
                 currentOperand = number;
             } else {
@@ -193,7 +188,6 @@
             updateDisplay();
         }
 
-        // Function to select an op
         function chooseOperation(selectedOperation) {
             if (currentOperand === '') {
                 return;
@@ -215,11 +209,9 @@
         function calculate() {
             var result;
             
-            // Convert strings to numbers
             var prev = parseFloat(previousOperand);
             var current = parseFloat(currentOperand);
             
-            // Check if both numbers are valid
             if (isNaN(prev) || isNaN(current)) {
                 return;
             }
@@ -269,4 +261,5 @@
         }
     </script>
 </body>
+
 </html>
